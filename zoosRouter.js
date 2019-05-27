@@ -38,4 +38,19 @@ router.get('/:id', (req, res) => {
         })
 })
 
+router.post('/', (req, res) => {
+    db('zoos').insert(req.body, 'id')
+        .then(results => {
+            db('zoos')
+                .where({id: results[0]})
+                .first()
+                .then(zoo => {
+                    res.status(200).json(zoo)
+                })
+        })
+        .catch(err => {
+            res.status(500).json(err);
+        })
+})
+
 module.exports = router;
