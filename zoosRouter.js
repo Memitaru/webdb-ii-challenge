@@ -40,16 +40,44 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
     db('zoos').insert(req.body, 'id')
+        .first()
         .then(results => {
-            db('zoos')
-                .where({id: results[0]})
-                .first()
-                .then(zoo => {
-                    res.status(200).json(zoo)
-                })
+            res.status(201).json(results)
         })
         .catch(err => {
             res.status(500).json(err);
+        })
+})
+
+router.delete('/:id', (req, res) => {
+    db('zoos')
+        .where({id: req.params.id})
+        .del()
+        .then(count => {
+            if (count) {
+                res.status(200).json(count)
+            } else {
+                res.status(404).json({message: "No zoo at that ID"})
+            }
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
+
+router.put('/:id', (req, res) => {
+    db('zoos')
+        .where({id: req.params.id})
+        .update(req.body)
+        .then(count => {
+            if (count) {
+                res.status(200).json(count)
+            } else {
+                res.status(404).json({message: "No zoo at that ID"})
+            }
+        })
+        .catch(err => {
+            res.status(500).json(err)
         })
 })
 
